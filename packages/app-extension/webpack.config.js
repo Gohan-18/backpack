@@ -1,6 +1,5 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { ProgressPlugin, ProvidePlugin, DefinePlugin } = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -69,13 +68,13 @@ const swcLoaderConfiguration = {
   },
 };
 
-const tamaguiLoaderConfiguration = {
-  loader: "tamagui-loader",
-  options: {
-    config: "./tamagui.config.ts",
-    components: ["@coral-xyz/tamagui", "tamagui"],
-  },
-};
+// const tamaguiLoaderConfiguration = {
+//   loader: "tamagui-loader",
+//   options: {
+//     config: "./tamagui.config.ts",
+//     components: ["@coral-xyz/tamagui", "tamagui"],
+//   },
+// };
 
 const fileExtensions = [
   "eot",
@@ -145,6 +144,7 @@ const options = {
     options: "./src/options/index.tsx",
     permissions: "./src/permissions/index.tsx",
     popup: "./src/index.tsx",
+    warning: "./src/warning.ts",
     contentScript: "./src/contentScript/index.ts",
     // injected: "../provider-injection/dist/browser/index.js",
   },
@@ -220,17 +220,6 @@ const options = {
       zlib: require.resolve("browserify-zlib"),
     },
   },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        minify: TerserPlugin.swcMinify,
-        // `terserOptions` options will be passed to `swc` (`@swc/core`)
-        // Link to options - https://swc.rs/docs/config-js-minify
-        terserOptions: {},
-      }),
-    ],
-  },
   plugins: [
     new DefinePlugin({
       process: {
@@ -257,7 +246,7 @@ const options = {
         {
           from: "src/manifest.json",
           force: true,
-          transform: function (content, path) {
+          transform: function (content) {
             return Buffer.from(
               JSON.stringify(
                 {
